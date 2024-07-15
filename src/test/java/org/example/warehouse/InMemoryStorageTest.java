@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 class InMemoryStorageTest {
 
@@ -74,5 +73,42 @@ class InMemoryStorageTest {
         Assertions.assertTrue(storage.containsItem("3"));
         Assertions.assertTrue(storage.containsItem("2"));
         Assertions.assertTrue(storage.containsItem("1"));
+    }
+
+    @Test
+    void getAll(){
+        Wheel hakka = new Wheel(UUID.randomUUID().toString(), "hakkapelita", "winter", "A", 10);
+        Wheel michelin = new Wheel(UUID.randomUUID().toString(), "michelin", "winter", "B", 10);
+        Wheel hakkaSummer = new Wheel(UUID.randomUUID().toString(), "hakkapelita", "summer", "A", 10);
+        Wheel nordman = new Wheel(UUID.randomUUID().toString(), "nordman", "winter", "A", 10);
+        Wheel noname = new Wheel(UUID.randomUUID().toString(), "noname", "winter", "A", 10);
+        storage.putAllItems(List.of(hakka, michelin, hakkaSummer, nordman, nordman, noname));
+
+        Map<String, Wheel> allItems = storage.getAllItems();
+
+        Assertions.assertEquals(5, allItems.size());
+
+        allItems.put("1", new Wheel("1", "hakkapelita", "winter", "A", 10));
+
+        Assertions.assertEquals(5, storage.getAllItems().size());
+    }
+
+    @Test
+    void getAllSortedByModel(){
+        Wheel hakka = new Wheel("1", "hakkapelita", "winter", "A", 10);
+        Wheel michelin = new Wheel("2", "michelin", "winter", "B", 10);
+        Wheel hakkaSummer = new Wheel("3", "hakkapelita", "summer", "A", 10);
+        Wheel nordman = new Wheel("4", "nordman", "winter", "A", 10);
+        Wheel noname = new Wheel("5", "noname", "winter", "A", 10);
+        List<Wheel> items = List.of(hakkaSummer, hakka, michelin, nordman, noname);
+        storage.putAllItems(items);
+
+        Set<String> expectedModels = new HashSet<>(List.of("hakkapelita", "michelin", "noname", "nordman"));
+
+        List<Wheel> allItemsSorted = storage.getAllItemsSorted(wheel -> expectedModels.contains(wheel.model()));
+
+        List<Wheel> sortedOrder = List.of(hakkaSummer, hakka, michelin, noname, nordman);
+        Assertions.assertEquals(5, allItemsSorted.size());
+        Assertions.assertEquals(sortedOrder, allItemsSorted);
     }
 }

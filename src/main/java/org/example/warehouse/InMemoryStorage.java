@@ -2,9 +2,9 @@ package org.example.warehouse;
 
 import org.example.warehouse.exceptions.ItemNotFoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class InMemoryStorage implements Storage{
 
@@ -45,4 +45,26 @@ public class InMemoryStorage implements Storage{
             putItem(item);
         }
     }
+
+    @Override
+    public Map<String, Wheel> getAllItems() {
+        return new HashMap<>(items);
+    }
+
+    @Override
+    public List<Wheel> getAllItemsSorted(Predicate<Wheel> predicate) {
+        List<Wheel> list = new ArrayList<>();
+        for (Wheel wheel : items.values()){
+            if(predicate.test(wheel)){
+                list.add(wheel);
+            }
+        }
+
+        list.sort(Comparator.comparing(Wheel::model)
+                .thenComparing(Wheel::category)
+                .thenComparing(Wheel::place)
+                .thenComparing(Wheel::id));
+        return list;
+    }
+
 }

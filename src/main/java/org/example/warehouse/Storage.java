@@ -3,6 +3,8 @@ package org.example.warehouse;
 import org.example.warehouse.exceptions.ItemNotFoundException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public interface Storage {
     void putItem(Wheel wheel);
@@ -11,5 +13,8 @@ public interface Storage {
     Wheel removeItem(String id) throws ItemNotFoundException;
 
     void putAllItems(List<Wheel> wheel1);
+
+    Map<String, Wheel> getAllItems();
+    List<Wheel> getAllItemsSorted(Predicate<Wheel> predicate);
 }
 
